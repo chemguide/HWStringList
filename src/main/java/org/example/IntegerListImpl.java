@@ -5,20 +5,20 @@ import Exceptions.ElementNotFoundException;
 import Exceptions.NullParameterException;
 import Exceptions.PositionNotExistException;
 
-public class StringListImpl implements StringList {
+public class IntegerListImpl implements IntegerList {
 
     private int arraySize;
 
-    public StringListImpl(int arraySize) {
+    public IntegerListImpl(int arraySize) {
         this.arraySize = arraySize;
     }
 
-    private String[] array = new String[arraySize];
+    private Integer[] array = new Integer[arraySize];
 
     public void extendArray() {
         if (array.length == size()) {
             arraySize = array.length + 5;
-            String[] newArray = new String[arraySize];
+            Integer[] newArray = new Integer[arraySize];
             for (int i = 0; i < array.length; i++) {
                 newArray[i] = array[i];
             }
@@ -32,13 +32,13 @@ public class StringListImpl implements StringList {
         }
     }
 
-    public void nullCheck(String string) {
-        if (string == null) {
+    public void nullCheck(Integer number) {
+        if (number == null) {
             throw new NullParameterException();
         }
     }
 
-    public String add(String item) {
+    public Integer add(Integer item) {
         nullCheck(item);
         extendArray();
         array[size()] = item;
@@ -46,7 +46,7 @@ public class StringListImpl implements StringList {
     }
 
 
-    public String add(int index, String item) {
+    public Integer add(int index, Integer item) {
         nullCheck(item);
         correctPositionCheck(index);
         extendArray();
@@ -58,7 +58,7 @@ public class StringListImpl implements StringList {
     }
 
 
-    public String set(int index, String item) {
+    public Integer set(int index, Integer item) {
         nullCheck(item);
         correctPositionCheck(index);
         array[index] = item;
@@ -66,7 +66,7 @@ public class StringListImpl implements StringList {
     }
 
 
-    public String remove(String item) {
+    public Integer remove(Integer item) {
         nullCheck(item);
         int position = indexOf(item);
         if (!contains(item)) {
@@ -77,24 +77,17 @@ public class StringListImpl implements StringList {
     }
 
 
-    public String remove(int index) {
+    public Integer remove(int index) {
         correctPositionCheck(index);
-        String item = array[index];
-        for (int i = index; i < (size()-1); i++) {
+        Integer item = array[index];
+        for (int i = index; i < (size() - 1); i++) {
             array[i] = array[i + 1];
         }
-        array[size()-1] = null;
+        array[size() - 1] = null;
         return item;
     }
 
-
-    public boolean contains(String item) {
-        nullCheck(item);
-        return indexOf(item) != -1;
-    }
-
-
-    public int indexOf(String item) {
+    public int indexOf(Integer item) {
         nullCheck(item);
         int position = -1;
         for (int i = 0; i < size(); i++) {
@@ -107,7 +100,7 @@ public class StringListImpl implements StringList {
     }
 
     @Override
-    public int lastIndexOf(String item) {
+    public int lastIndexOf(Integer item) {
         nullCheck(item);
         int position = -1;
         for (int i = size() - 1; i >= 0; i--) {
@@ -120,13 +113,13 @@ public class StringListImpl implements StringList {
     }
 
 
-    public String get(int index) {
+    public Integer get(int index) {
         correctPositionCheck(index);
         return array[index];
     }
 
 
-    public boolean equals(StringList otherList) {
+    public boolean equals(IntegerList otherList) {
         if ((otherList == null) && (array != null)) {
             return false;
         } else if ((otherList == null) && (array == null)) {
@@ -162,18 +155,96 @@ public class StringListImpl implements StringList {
 
 
     public void clear() {
-        array = new String[arraySize];
+        array = new Integer[arraySize];
     }
 
 
-    public String[] toArray() {
+    public Integer[] toArray() {
         if (isEmpty()) {
             throw new ArrayIsEmptyException();
         }
-        String[] newArray = new String[size()];
+        Integer[] newArray = new Integer[size()];
         for (int i = 0; i < newArray.length; i++) {
             newArray[i] = get(i);
         }
         return newArray;
+    }
+
+    public void swapElements(int pos1, int pos2) {
+        if (isEmpty()) {
+            throw new ArrayIsEmptyException();
+        }
+        correctPositionCheck(pos1);
+        correctPositionCheck(pos2);
+        Integer buffer = get(pos1);
+        set(pos1, get(pos2));
+        set(pos2, buffer);
+    }
+
+    public void bubbleSort() {
+        if (isEmpty()) {
+            throw new ArrayIsEmptyException();
+        }
+        for (int i = 0; i < size(); i++) {
+            for (int i1 = 0; i1 < (size() - 1 - i); i1++) {
+                if (get(i1) > get(i1 + 1)) {
+                    swapElements(i1, (i1 + 1));
+                }
+            }
+        }
+    }
+
+    // Самый быстрый метод сортировки
+    public void chooseSort() {
+        if (isEmpty()) {
+            throw new ArrayIsEmptyException();
+        }
+        Integer max = Integer.MIN_VALUE;
+        int posOfMax = 0;
+        for (int i = 0; i < size(); i++) {
+            for (int i1 = 0; i1 < (size() - i); i1++) {
+                if (get(i1) > max) {
+                    max = get(i1);
+                    posOfMax = i1;
+                }
+            }
+            swapElements(posOfMax, size() - 1 - i);
+            max = Integer.MIN_VALUE;
+        }
+    }
+
+    public void insertSort() {
+        if (isEmpty()) {
+            throw new ArrayIsEmptyException();
+        }
+        for (int i = 1; i < size(); i++) {
+            int temp = get(i);
+            int j = i;
+            while (j > 0 && get(j - 1) >= temp) {
+                set(j, get(j - 1));
+                j--;
+            }
+            set(j, temp);
+        }
+    }
+
+    public boolean contains(Integer item) {
+        int min = 0;
+        int max = size() - 1;
+
+        while (min <= max) {
+            int mid = (min + max) / 2;
+
+            if (item.equals(get(mid))) {
+                return true;
+            }
+
+            if (item < get(mid)) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
+            }
+        }
+        return false;
     }
 }
