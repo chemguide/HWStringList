@@ -229,6 +229,10 @@ public class IntegerListImpl implements IntegerList {
     }
 
     public boolean contains(Integer item) {
+        if (isEmpty()) {
+            throw new ArrayIsEmptyException();
+        }
+        chooseSort();
         int min = 0;
         int max = size() - 1;
 
